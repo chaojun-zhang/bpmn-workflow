@@ -1,0 +1,15 @@
+<definitions xmlns:di="http://www.omg.org/spec/BPMN/20100524/DI" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  <process tns:adHoc="true" isClosed="false" isExecutable="false" tns:packageName="org.drools.bpmn2" tns:version="1" xmlns:tns="http://www.jboss.org/drools">
+    <startEvent id="2" isInterrupting="false" parallelMultiple="false"/>
+  </process>
+  <di:BPMNDiagram di:resolution="NaN">
+    <di:BPMNPlane>
+      <di:BPMNShape di:isExpanded="false" di:isHorizontal="false" di:isMarkerVisible="false" di:isMessageVisible="false" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC">
+        <dc:Bounds dc:height="10" dc:width="10" dc:x="10" dc:y="10"/>
+      </di:BPMNShape>
+      <di:BPMNEdge>
+        <dc:Point dc:x="10" dc:y="20" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"/>
+      </di:BPMNEdge>
+    </di:BPMNPlane>
+  </di:BPMNDiagram>
+</definitions>
