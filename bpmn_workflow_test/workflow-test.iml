@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="Main">
+    <configurations>
+      <configuration name="Main" main-class="Main" output-file="Main.swf" output-folder="$MODULE_DIR$/bin-debug" use-html-wrapper="true" wrapper-template-path="$MODULE_DIR$/html-template">
+        <dependencies target-player="11.1">
+          <entries>
+            <entry library-id="4020cefb-9e39-4205-a7df-b0facfe65ef2">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="46b9d476-a31a-440e-aa26-33f59059a5de">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="248d44e8-f89c-4aaa-977d-67c4e5fd460e">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex_sdk_4.6" />
+        </dependencies>
+        <compiler-options>
+          <map>
+            <entry key="compiler.locale" value="en_US" />
+          </map>
+        </compiler-options>
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="flex_sdk_4.6" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="4020cefb-9e39-4205-a7df-b0facfe65ef2" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="46b9d476-a31a-440e-aa26-33f59059a5de" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/FlexXB/bin/FlexXB.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="248d44e8-f89c-4aaa-977d-67c4e5fd460e" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/workflow/bin/workflow.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
+
