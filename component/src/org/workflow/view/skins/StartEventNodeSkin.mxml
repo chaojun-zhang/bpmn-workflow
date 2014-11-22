@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx">
+	<!-- host component -->
+	<fx:Metadata>
+		[HostComponent("org.workflow.view.components.bpmn.node.StartEventNode")]
+	</fx:Metadata>
+	<s:states>
+		<s:State name="executed" />
+		<s:State name="unexecuted" />
+	</s:states>
+	<!-- SkinParts
+	name=marker, type=mx.core.IVisualElement, required=false
+	name=img, type=mx.controls.Image, required=false
+	name=labelDisplay, type=spark.components.Label, required=false
+	-->
+	<s:Ellipse top="0" left="0" right="0" bottom="0" >
+		<s:stroke>
+			<s:SolidColorStroke color="black" weight="1"    />
+		</s:stroke>
+		<s:fill>
+			<s:LinearGradient >
+				<s:GradientEntry color="green" alpha="0.5" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Ellipse>
+
+	<s:Group  id="marker" width="100%" height="100%" >
+		<s:Rect top="0" left="0" right="0" bottom="0">
+			<s:stroke>
+				<s:SolidColorStroke  color="red" weight="1"  />
+			</s:stroke>
+		</s:Rect>
+		
+	</s:Group>
+	
+	<mx:Image id="eventDefinition" verticalCenter="0" horizontalCenter="0"/>
+	<mx:Label  id="labelDisplay" textAlign="center"  horizontalCenter="0"  bottom="-15" />
+	
+</s:Skin>

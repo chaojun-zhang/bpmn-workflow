@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:fb="http://ns.adobe.com/flashbuilder/2009"  xmlns:view="org.workflow.view.*" xmlns:skins="org.workflow.view.skins.*" xmlns:mx="library://ns.adobe.com/flex/mx">
+    <fx:Metadata>[HostComponent("org.workflow.view.components.bpmn.node.ActivityNode")]</fx:Metadata>
+
+	<s:states>
+		<s:State name="executed" />
+		<s:State name="unexecuted" />
+	</s:states>
+    <fx:Script >
+        <![CDATA[         
+			import mx.events.FlexEvent;
+			
+			import org.workflow.view.constants.GraphConstants;
+            /**
+             *  @private
+             */
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number) : void
+            {
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+				this.adjustAllGraphMarkerPostition(unscaledWidth, unscaledHeight);
+            }
+			
+			
+			private function adjustAllGraphMarkerPostition(unscaledWidth:Number, unscaledHeight:Number):void
+			{
+				var offSetX:Number = GraphConstants.MARKER_RADIOUS
+				var offSetY:Number = GraphConstants.MARKER_RADIOUS
+	 
+				moveMaker(topLeftMarker,-offSetX,-offSetY);
+				
+				moveMaker(topMarker,unscaledWidth /2 - offSetX,-offSetY);
+				
+				moveMaker(topRightMarker,unscaledWidth - offSetX, topMarker.y);
+				
+				moveMaker(leftMarker,topLeftMarker.x ,unscaledHeight /2 - offSetY);
+				
+				moveMaker(rightMarker, topRightMarker.x , leftMarker.y);
+				
+				moveMaker(bottomLeftMarker,leftMarker.x ,unscaledHeight - offSetY);
+				
+				moveMaker(bottomMarker,topMarker.x,bottomLeftMarker.y);
+				
+				moveMaker(bottomRightMarker, topRightMarker.x,  bottomMarker.y);
+			}
+			
+			private function moveMaker(marker:GraphMarkerRect,x:Number,y:Number):void
+			{
+				marker.x = x;
+				marker.y= y;
+			}
+
+			protected function marker_creationCompleteHandler(event:FlexEvent):void
+			{
+				for (var i:int = 0; i< marker.numElements; i++)
+				{
+					var childMarker:GraphMarkerRect = marker.getElementAt(i) as GraphMarkerRect;
+					childMarker.width = hostComponent.getGraphMarkerSize();
+					childMarker.height = hostComponent.getGraphMarkerSize();
+				}
+				
+			}
+
+        ]]>        
+    </fx:Script>
+    
+	<s:Rect  radiusX="5" radiusY="5"   top="0" left="0" right="0" bottom="0"  >
+		<s:stroke>
+			<s:SolidColorStroke id="bgFill"  color="blue" weight="2"  />
+		</s:stroke>
+		<s:fill>
+			<s:LinearGradient  >
+				<s:GradientEntry color="blue" alpha="0.5" color.executed="green" color.unexecuted="blue"/>
+				<s:GradientEntry color="0xafd1f0" alpha="1" color.executed="green" color.unexecuted="0xafd1f0"/>
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<s:Group id="marker" width="100%" height="100%" creationComplete="marker_creationCompleteHandler(event)">
+		<skins:GraphMarkerRect id="topLeftMarker" />
+		<skins:GraphMarkerRect id="topMarker"   />
+		<skins:GraphMarkerRect id="topRightMarker" />
+		<skins:GraphMarkerRect id="leftMarker"   />
+		<skins:GraphMarkerRect id="rightMarker"   />
+		<skins:GraphMarkerRect id="bottomLeftMarker"  />
+		<skins:GraphMarkerRect id="bottomRightMarker"  />
+		<skins:GraphMarkerRect id="bottomMarker"   />
+	</s:Group>
+	
+	
+	<mx:Image id="img" top="0" left="0" />
+	<mx:Label  id="labelDisplay" textAlign="center" verticalCenter="0" horizontalCenter="0"    />
+</s:Skin>

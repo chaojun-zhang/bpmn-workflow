@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:GraphContainer xmlns:fx="http://ns.adobe.com/mxml/2009"  
+						   xmlns:s="library://ns.adobe.com/flex/spark"  creationComplete="graphcontainer2_creationCompleteHandler(event)"
+						   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:components="org.workflow.view.components.*"  xmlns:prototype="org.workflow.view.components.prototype.*">
+
+	
+	<fx:Script>
+		<![CDATA[
+			import com.ericfeminella.collections.HashMap;
+			import com.ericfeminella.collections.IMap;
+			
+			import mx.events.FlexEvent;
+			
+			import org.workflow.model.bpmn2.TDefinitions;
+			import org.workflow.service.IWorkflowService;
+			import org.workflow.service.WorkflowServiceImpl;
+			import org.workflow.utils.XmlLoadUtil;
+			import org.workflow.view.components.GraphLink;
+			import org.workflow.view.components.prototype.GraphLinkPrototype;
+			import org.workflow.view.components.prototype.GraphNodePrototype;
+			import org.workflow.view.components.prototype.GraphPrototype;
+			
+			private var _processXml:XML;
+			
+			private var prototypeMap:IMap ;
+			
+			private var _processXmlUrl:String;
+			
+			private var _definition:TDefinitions;
+			
+			private var  workflowPersistence:IWorkflowService ; 
+			
+			public function get processXmlUrl():String
+			{
+				return _processXmlUrl;
+			}
+			
+			public function set processXmlUrl(value:String):void
+			{
+				_processXmlUrl = value;
+				
+				XmlLoadUtil.loadXML(value,loadProcessXml);
+			}
+			
+			private  function loadProcessXml(event:Event):void
+			{
+				var loader:URLLoader = event.target as URLLoader;              
+				if (loader != null)            
+				{              
+					this.processXml = new XML(loader.data);
+				}       
+				
+			};
+			public function get definition():TDefinitions
+			{
+				return _definition;
+			}
+			
+			public function set definition(value:TDefinitions):void
+			{
+				_definition = value;
+			}
+			
+			public function get processXml():XML
+			{
+				return _processXml;
+			}
+			
+			public function set processXml(value:XML):void
+			{
+				_processXml = value;
+				this.removeAllGraph();
+				if (value){
+					this.definition = workflowPersistence.loadFromXML(value);
+				}
+			}
+			
+			public function getPrototypeDict():IMap
+			{
+				if (!prototypeMap){
+					prototypeMap = new HashMap();
+					for each(var prototype:GraphPrototype in componentsDp.source){
+						prototypeMap.put(prototype.modelClass,prototype);
+					}
+				}
+				
+				return prototypeMap;
+			}
+			
+
+			protected function graphcontainer2_creationCompleteHandler(event:FlexEvent):void
+			{
+				workflowPersistence =  new WorkflowServiceImpl(getPrototypeDict(),this);
+			}
+
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<s:ArrayList id="componentsDp">
+			<prototype:GraphLinkPrototype elementIconUrl="assets/icon/bpmn/obj16/SequenceFlow.png"
+										  skinClass="org.workflow.view.skins.GraphLinkSkin" modelClass="org.workflow.model.bpmn2.TSequenceFlow"
+										  graphClass="org.workflow.view.components.bpmn.link.FlowLink"
+										  label="Sequence Flow" lineStyle="{GraphLink.SOLID_LINE}"
+										  />
+			<!--			<prototype:GraphLinkPrototype elementIconUrl="assets/icon/bpmn/obj16/MessageFlow.png"
+			skinClass="org.workflow.view.skins.GraphLinkSkin"  modelClass="org.workflow.model.bpmn2.TMessageFlow"
+			graphClass="org.workflow.view.components.GraphLink"
+			label="Message Flow" lineStyle="{GraphLink.DASHED_LINE}"
+			/>
+			-->
+			<!--		</mx:ArrayCollection>
+			<mx:ArrayCollection id="tasksDp">-->
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/Task.png" 
+										  imageUrl="assets/icon/bpmn/obj32/Task.png" 
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin"  modelClass="org.workflow.model.bpmn2.TTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" 
+										  label="Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/Manual.png"
+										  imageUrl="assets/icon/bpmn/obj32/Manual.png" 
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" modelClass="org.workflow.model.bpmn2.TManualTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" 
+										  label="Manual Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/UserTask.png"
+										  imageUrl="assets/icon/bpmn/obj32/UserTask.png" 
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" modelClass="org.workflow.model.bpmn2.TUserTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode"
+										  label="User Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ScriptTask.png"
+										  imageUrl="assets/icon/bpmn/obj32/ScriptTask.png" 
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin"  modelClass="org.workflow.model.bpmn2.TScriptTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode"
+										  label="Script Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/BusinessRuleTask.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" 
+										  imageUrl="assets/icon/bpmn/obj32/BusinessRuleTask.png" 
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" modelClass="org.workflow.model.bpmn2.TBusinessRuleTask"
+										  label="Business Rule Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ServiceTask.png"
+										  imageUrl="assets/icon/bpmn/obj32/ServiceTask.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" modelClass="org.workflow.model.bpmn2.TServiceTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode"
+										  label="Service Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/SendTask.png"
+										  imageUrl="assets/icon/bpmn/obj32/SendTask.png"
+										  modelClass="org.workflow.model.bpmn2.TSendTask"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" 
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" 
+										  label="Send Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ReceiveTask.png"
+										  imageUrl="assets/icon/bpmn/obj32/ReceiveTask.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" modelClass="org.workflow.model.bpmn2.TReceiveTask"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" 
+										  label="Receive Task" width="110" height="50" minHeight="50" minWidth="110"
+										  />
+			<!--	</mx:ArrayCollection>
+			
+			<mx:ArrayCollection id="gatewayDp">-->
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/InclusiveGateway.png"
+										  skinClass="org.workflow.view.skins.InclusiveGatewaySkin" canResize="false"
+										 
+										  graphClass="org.workflow.view.components.bpmn.node.GatewayNode"  modelClass="org.workflow.model.bpmn2.TInclusiveGateway"
+										  label="Inclusive Gateway"  width="50" height="50" minHeight="50" minWidth="50"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ExclusiveGateway.png" canResize="false"
+										  skinClass="org.workflow.view.skins.ExclusiveGatewaySkin"  modelClass="org.workflow.model.bpmn2.TExclusiveGateway"
+										  graphClass="org.workflow.view.components.bpmn.node.GatewayNode"  
+						
+										  label="Exclusive Gateway"  width="50" height="50" minHeight="50" minWidth="50"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ParallelGateway.png" canResize="false"
+										  skinClass="org.workflow.view.skins.ParallelGatewaySkin"  modelClass="org.workflow.model.bpmn2.TParallelGateway"
+										  graphClass="org.workflow.view.components.bpmn.node.GatewayNode" 
+										
+										  label="Parallel Gateway"  width="50" height="50" minHeight="50" minWidth="50"
+										  />
+			<!--<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/EventBasedGateway.png" canResize="false"
+			skinClass="org.workflow.view.skins.GraphImageNodeSkin"
+			imageUrl="assets/icon/bpmn/obj64/EventBasedGateway.png"
+			graphClass="org.workflow.view.components.bpmn.node.GatewayNode" modelClass="org.workflow.model.bpmn2.TEventBasedGateway"
+			label="Event based Gateway"   width="60" height="60" minHeight="60" minWidth="60"
+			/>
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/ComplexGateway.png" canResize="false"
+			skinClass="org.workflow.view.skins.GraphImageNodeSkin" modelClass="org.workflow.model.bpmn2.TComplexGateway"
+			graphClass="org.workflow.view.components.bpmn.node.GatewayNode" 
+			imageUrl="assets/icon/bpmn/obj64/ComplexGateway.png"
+			label="Complex Gateway"  width="60" height="60" minHeight="60" minWidth="60"
+			/>-->
+			<!--</mx:ArrayCollection>
+			
+			<mx:ArrayCollection id="eventsDp">-->
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/StartEvent.png" modelClass="org.workflow.model.bpmn2.TStartEvent"
+										  skinClass="org.workflow.view.skins.StartEventNodeSkin"
+										  graphClass="org.workflow.view.components.bpmn.node.EventNode" canResize="false"
+										  label="Start Event" width="36" height="36" minHeight="36" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/EndEvent.png"  modelClass="org.workflow.model.bpmn2.TEndEvent"
+										  skinClass="org.workflow.view.skins.EndEventNodeSkin"
+										  graphClass="org.workflow.view.components.bpmn.node.EventNode" canResize="false"
+										  label="End Event" width="36" height="36" minHeight="36" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/BoundaryEvent.png"
+										  skinClass="org.workflow.view.skins.EventNodeSkin"  modelClass="org.workflow.model.bpmn2.TIntermediateThrowEvent"
+										  graphClass="org.workflow.view.components.bpmn.node.EventNode" canResize="false" 
+										  label="Throw Event" width="36" height="36" minHeight="36" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/BoundaryEvent.png"
+										  skinClass="org.workflow.view.skins.EventNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.bpmn.node.EventNode"  modelClass="org.workflow.model.bpmn2.TCatchEvent"
+										  label="Catch Event" width="36" height="36" minHeight="36" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/BoundaryEvent.png" canCreateIndepent="false"
+										  skinClass="org.workflow.view.skins.EventNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.bpmn.node.BoundaryEventNode" modelClass="org.workflow.model.bpmn2.TBoundaryEvent"
+										  label="Boundary Event" width="36" height="36" minHeight="36" minWidth="36"
+										  />
+			<!--	</mx:ArrayCollection>
+			<mx:ArrayCollection id="dataItemsDp">-->
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/DataObject.png"
+										  imageUrl="assets/icon/bpmn/obj16/DataObject.png"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.GraphNode" modelClass="org.workflow.model.bpmn2.TDataObject"
+										  label="Data Object" width="36" height="65" minHeight="65" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/DataObject.png"
+										  imageUrl="assets/icon/bpmn/obj16/DataObject.png"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.GraphNode" modelClass="org.workflow.model.bpmn2.TDataObjectReference"
+										  label="Data Object Ref" width="36" height="65" minHeight="65" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/DataInput.png"
+										  imageUrl="assets/icon/bpmn/obj16/DataInput.png"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.GraphNode" modelClass="org.workflow.model.bpmn2.TDataInput"
+										  label="Data Input" width="36" height="65" minHeight="65" minWidth="36"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/DataOutput.png" canResize="false"
+										  imageUrl="assets/icon/bpmn/obj16/DataOutput.png"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin" modelClass="org.workflow.model.bpmn2.TDataOutput"
+										  graphClass="org.workflow.view.components.GraphNode" 
+										  label="Data Output" width="36" height="65" minHeight="65" minWidth="36"
+										  />
+			
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/DataStore.png" modelClass="org.workflow.model.bpmn2.TDataStore"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin" canResize="false"
+										  graphClass="org.workflow.view.components.GraphNode" 
+										  imageUrl="assets/icon/bpmn/obj16/DataStore.png"
+										  label="Data Store" width="36" height="65" minHeight="65" minWidth="36"
+										  />
+			<!--</mx:ArrayCollection>
+			<mx:ArrayCollection id="othersDp">-->
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/Lane.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" modelClass="org.workflow.model.bpmn2.TLane"
+										  graphClass="org.workflow.view.components.bpmn.node.LaneNode"  
+										  label="Lane" width="600" height="100" minHeight="100" minWidth="8"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/SubProcess.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin"  
+										  graphClass="org.workflow.view.components.bpmn.node.SubProcessNode" modelClass="org.workflow.model.bpmn2.TSubProcess"
+										  label="Sub Process" width="300" height="300" minHeight="90" minWidth="150"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/AdHocSubProcess.png"
+										  skinClass="org.workflow.view.skins.ActivityNodeSkin" 
+										  graphClass="org.workflow.view.components.bpmn.node.SubProcessNode" modelClass="org.workflow.model.bpmn2.TAdHocSubProcess"
+										  label="AdHoc Sub Process" width="300" height="300" minHeight="90" minWidth="150"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/CallActivity.png"
+										  skinClass="org.workflow.view.skins.CallActivitySkin"
+										  graphClass="org.workflow.view.components.bpmn.node.ActivityNode" modelClass="org.workflow.model.bpmn2.TCallActivity"
+										  label="Call Activity" width="110" height="50" minHeight="8" minWidth="8"
+										  />
+			<prototype:GraphNodePrototype elementIconUrl="assets/icon/bpmn/obj16/Message.png" modelClass="org.workflow.model.bpmn2.TMessage"
+										  imageUrl="assets/icon/bpmn/obj32/Message.png"
+										  skinClass="org.workflow.view.skins.ImageNodeSkin"
+										  graphClass="org.workflow.view.components.bpmn.node.MessageNode" canResize="false"
+										  label="Message" width="30" height="20" minHeight="8" minWidth="8"
+										  />
+		</s:ArrayList>
+	</fx:Declarations>
+	
+	
+</components:GraphContainer>

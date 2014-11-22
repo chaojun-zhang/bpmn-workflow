@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" width="100%" height="100%"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:view="org.workflow.view.*"    xmlns:bpmn="org.workflow.view.components.bpmn.*" xmlns:prototype="org.workflow.view.components.prototype.*" xmlns:components="org.workflow.view.components.*" xmlns:designer="org.workflow.view.components.bpmn.designer.*" >
+	<fx:Declarations>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import org.workflow.view.components.GraphBase;
+			import org.workflow.view.components.prototype.GraphLinkPrototype;
+			import org.workflow.view.components.prototype.GraphNodePrototype;
+			import org.workflow.view.components.prototype.GraphPrototype;
+			import org.workflow.view.constants.GraphCommandMode;
+			
+			[Bindable]
+			
+			[Embed(source="assets/icon/common/eagleEyeExpand.png")]
+			private var expandSource:Class;
+			
+			protected function removeAll(event:MouseEvent):void
+			{
+				workflowComponent.removeAllGraph();
+			}
+			
+			
+			protected function sendToBack(event:MouseEvent):void
+			{
+				workflowComponent.sendToBack();
+			}
+			
+			
+			protected function bringToFront(event:MouseEvent):void
+			{
+				workflowComponent.bringToFront();
+			}
+			
+			
+			protected function deleteGraph(event:MouseEvent):void
+			{
+				workflowComponent.deleteSelected();
+			}
+			
+			
+			protected function componentList_clickHandler(event:MouseEvent):void
+			{
+				var selectedItem:GraphPrototype = componentList.selectedItem as GraphPrototype;
+				if (selectedItem){
+					if (selectedItem is GraphLinkPrototype){
+						workflowComponent.graphCommandMode = GraphCommandMode.INSERT_LINK;
+					}else if (selectedItem is GraphNodePrototype){
+						workflowComponent.graphCommandMode = GraphCommandMode.INSERT_NODE;
+					}
+					
+					workflowComponent.prototype = selectedItem;
+				}else{
+					workflowComponent.graphCommandMode = GraphCommandMode.EDIT;
+				}
+				this.componentList.selectedIndex = -1;
+			}
+			
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				workflowComponent.forEachGraph(function(graph:GraphBase):void{
+					graph.scale(1);
+					
+				});
+			}
+			
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				workflowComponent.forEachGraph(function(graph:GraphBase):void{
+					graph.scale(-1);
+					
+				});
+			}
+			
+			protected function button4_clickHandler(event:MouseEvent):void
+			{
+				workflowComponent.graphCommandMode = GraphCommandMode.EDIT;
+			}
+			
+			protected function loadFromXml(event:MouseEvent):void
+			{
+				workflowComponent.processXmlUrl = "assets/xml/process.xml";
+				
+			}
+			
+			protected function showThumbnail(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				graphThumbnail.visible = !graphThumbnail.visible;
+				graphThumbnail.refreshThumbnail();
+			}
+			
+
+
+			protected function workflowComponent_mouseDownHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				graphThumbnail.visible = false;
+			}
+
+		]]>
+	</fx:Script>
+	<s:VGroup    width="100%" height="100%"    > 
+		
+		<s:HGroup width="100%" height="100%">
+			<mx:Canvas width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+				<designer:WorkflowContainer  id="workflowComponent" height="4000" width="3000"  mouseDown="workflowComponent_mouseDownHandler(event)" />
+				<s:Image id="eye" source="{expandSource}" click="showThumbnail(event)" right="0" top="0"/>
+				<designer:GraphThumbnail id="graphThumbnail" borderStyle="solid" targetView="{workflowComponent}"  visible="false"  width="240" height="180"  right="0"  top="0"/>
+			</mx:Canvas>
+			<s:Panel id="componentPanel" height="100%">
+				<s:List width="100%" id="componentList" click="componentList_clickHandler(event)" dataProvider="{workflowComponent.componentsDp}" labelField="label"   itemRenderer="org.workflow.view.components.bpmn.designer.GraphPrototypeRender" />
+			</s:Panel>
+		</s:HGroup>
+		
+		<s:HGroup id="btns" width="100%">
+			<s:Button  label="Edit"  click="button4_clickHandler(event)"/>
+			<s:Button  label="Send to back"  click="sendToBack(event)"/>
+			<s:Button  label="Bring to front" click="bringToFront(event)" />
+			<s:Button  label="Delete" click="deleteGraph(event)" />
+			<s:Button  click="removeAll(event)" label="Delete All" />
+			<s:Button click="loadFromXml(event)" label="Load Sample Process" />
+			<s:Button click="showThumbnail(event)" label="View thumbnail" />
+		</s:HGroup>
+		
+	</s:VGroup>
+	
+</s:Group>
